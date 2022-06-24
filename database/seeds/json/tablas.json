@@ -1,0 +1,11 @@
+
+[
+{"id":"1","detalle":"Clima","tabla":"clima","pregunta":"Cual es el clima de"},
+{"id":"2","detalle":"Capital","tabla":"capital","pregunta":"Cual es la capital de"},
+{"id":"3","detalle":"Baile","tabla":"baile","pregunta":"Cual es el baile representativo de"},
+{"id":"4","detalle":"Hidrografia","tabla":"hidrografia","pregunta":"Cuales son los rios mas importantes de "},
+{"id":"5","detalle":"Relieve","tabla":"relieve","pregunta":"Cual es el relieve representativo de"},
+{"id":"6","detalle":"Comida","tabla":"comida","pregunta":"Cual es la comida tipica de"},
+{"id":"7","detalle":"Economia","tabla":"economia","pregunta":"Cual es la actividad economica de"}
+]
+
