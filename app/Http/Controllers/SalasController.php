@@ -7,7 +7,7 @@ use App\Salas;
 
 class SalasController extends Controller
 {
-    public function store(Request $request)
+    public function crearsalas(Request $request)
     {
         //
         if(!$request->ajax()) return redirect('/');
@@ -21,7 +21,7 @@ class SalasController extends Controller
 
     }
 
-    public function update(Request $request)
+    public function editarsalas(Request $request)
     {
         //
         if(!$request->ajax()) return redirect('/');
@@ -30,10 +30,16 @@ class SalasController extends Controller
         $Salas->save();
     }
 
-    public function indexSalas(){
+    public function validarsalas(){
         $respuesta = Salas::orderBy('id','asc')->get();
 
         return ['respuesta' => $respuesta];
         }
+
+    public function infosalas(){
+            $respuesta = Salas::orderBy('id','asc')->get();
+    
+            return ['respuesta' => $respuesta];
+        }        
 
 }
