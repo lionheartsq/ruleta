@@ -15,10 +15,10 @@ class CreateSalasTable extends Migration
     {
         Schema::create('salas', function (Blueprint $table) {
             $table->id();
-            $table->integer('capacidad_sala')->unsigned();
-            $table->integer('tipo_juego')->unsigned();
-            $table->integer('n_puntaje')->unsigned();
-            $table->integer('n_turnos')->unsigned();
+            $table->integer('capacidadSala')->unsigned();
+            $table->integer('tipoJuego')->unsigned();
+            $table->integer('nPuntaje')->unsigned();
+            $table->integer('nTurnos')->unsigned();
             $table->boolean('estado')->default(1);;
             
         });

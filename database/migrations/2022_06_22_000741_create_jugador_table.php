@@ -16,7 +16,7 @@ class CreateJugadorTable extends Migration
         Schema::create('jugador', function (Blueprint $table) {
             
             $table->id();
-            $table->string('nombre_usuario', 255)->unique();
+            $table->string('nombreUsuario', 255)->unique();
             // $table->timestamps();
         });
     }
