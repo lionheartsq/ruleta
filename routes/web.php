@@ -17,6 +17,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
 Route::get("/departamento/listar", "DepartamentoController@indexdepartamento");
 Route::get("/departamento/getInfo", "DepartamentoController@infodepartamento");
 Route::get("/departamento/crear", "DepartamentoController@creardepartamento");
@@ -101,9 +102,8 @@ Route::get("/relieve/eliminar", "RelieveController@eliminarrelieve");
 //Route::put("/relieve/eliminar", "RelieveController@eliminarrelieve");
 
 //Route::post("/salas/crear", "SalasController@crearsalas");
+//
 Route::get("/salas/crear", "SalasController@crearsalas");
 Route::put("/salas/editar", "SalasController@editarsalas");
 Route::get("/salas/validar", "SalasController@validarsalas");
 Route::get("/salas/getInfo", "SalasController@infosalas");
-
-

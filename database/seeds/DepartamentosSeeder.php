@@ -17,9 +17,9 @@ class DepartamentosSeeder extends Seeder
         foreach ($data as $item){
             Departamento::create(array(
                 //'id' => $item->IdRol,
-                'detalle' => $item->detalle,
+                'detalle' => $item->detalle
                 // 'idDepartamento' => $item->idDepartamento,
-               
+
             ));
             }
     }
