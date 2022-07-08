@@ -9,7 +9,7 @@ class Salas extends Model
     //
     protected $table = 'salas';
 
-    protected $fillable = ['capacidadSala','tipoJuego','nPuntaje','nTurnos'];
+    protected $fillable = ['capacidadSala','tipoJuego','nPuntaje','nTurnos','urlRandom'];
 
     public $timestamps = false;
 }

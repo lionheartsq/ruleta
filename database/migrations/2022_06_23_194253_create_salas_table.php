@@ -19,7 +19,8 @@ class CreateSalasTable extends Migration
             $table->integer('tipoJuego')->unsigned();
             $table->integer('nPuntaje')->unsigned();
             $table->integer('nTurnos')->unsigned();
-            $table->boolean('estado')->default(1);;
+            $table->boolean('estado')->default(1);
+            $table->string('urlRandom');
             
         });
     }

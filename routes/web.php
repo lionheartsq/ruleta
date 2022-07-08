@@ -100,6 +100,7 @@ Route::get("/relieve/editar", "RelieveController@editarrelieve");
 Route::get("/relieve/eliminar", "RelieveController@eliminarrelieve");
 //Route::put("/relieve/eliminar", "RelieveController@eliminarrelieve");
 
+//Route::post("/salas/crear", "SalasController@crearsalas");
 Route::get("/salas/crear", "SalasController@crearsalas");
 Route::put("/salas/editar", "SalasController@editarsalas");
 Route::get("/salas/validar", "SalasController@validarsalas");
