@@ -19,6 +19,8 @@ class CreateDetalladosalasTable extends Migration
             $table->foreignId('idJugador')->constrained('jugador');
             $table->integer('turno')->unsigned();
             $table->integer('puntaje')->unsigned();
+            
+
         });
     }
 //'>foreignId('idProducto')->constrained('tb_producto');
