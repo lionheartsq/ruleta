@@ -48,18 +48,22 @@ class SalasController extends Controller
 
     public function ingresarsalas(Request $request)
     {
+        // /salas/ingresar?stringsala=85UIQN0RKB&idJugador=1
+
+        $flag=0;
         $stringsala=$request->id;
         $idJugador=$request->idJugador;
 
         // /salas/ingresar?id=85UIQN0RKB&idJugador=1
         //con este busco en salas cual lo tiene como string y que esté en espera, de ahi me traigo el idsala
 
-        $respuesta = Salas::where('urlRandom', '=', $stringsala)
-        ->where('estado', '=', '1')
+        $respuesta = Salas::where('estado', '=', '1')
+        ->where('urlRandom', '=', $stringsala)
         ->orderBy('id','asc')->get();
 
+        $cantidad=$respuesta->count();
 
-        if($respuesta->isNotEmpty()){
+        if($cantidad>0){
             foreach($respuesta as $guia){ //apertura foreach nomina
                 $idSala = $guia->id;
                 $capacidadSala = $guia->capacidadSala;
@@ -90,21 +94,24 @@ class SalasController extends Controller
                 $detalladosalas->save();
 
                 if($capacidadSala==($cantusuarios-1)){
+                    $Salas=Salas::findOrFail($idSala);
+                    $Salas->estado='2';
+                    $Salas->save();
                     //cambio estado de la sala y salgo
+                    $respuesta="Usuario ingresa con éxito";
                 }
                 else{
                     //solo salgo
+                    $respuesta="Usuario ingresa con éxito";
                 }
-
-                $respuesta="Usuario ingresa con éxito";
             }
             else {
                 //
-                $respuesta="Pailas se lleno la sala";
+                $respuesta="La sala está llena";
             }
         }
         else{
-            $respuesta="Pailas la sala no esta disponible";
+            $respuesta="La sala no está disponible";
         }
 
         //validaciones: si excede los usuarios hay tabla. si la sala esta activa hay tabla. si la sala esta cerrada madrugue.
