@@ -68,7 +68,18 @@ class SalasController extends Controller
                 $idSala = $guia->id;
                 $capacidadSala = $guia->capacidadSala;
                 }
-            $flag=1;
+                
+            $validadorIngreso= DetalladoSalas::where('idJugador','=',$idJugador)
+            ->where ('idSala', '=', $idSala)
+            ->count();
+
+            if($validadorIngreso>0){
+                echo "El jugador ya está registrado; existe : ".$validadorIngreso." veces";
+                $flag=0;
+            } 
+            else{
+                $flag=1;
+            }   
         }
         else{
             $flag=0;
@@ -80,7 +91,7 @@ class SalasController extends Controller
             ->where('detalladosalas.idSala','=', $idSala)
             ->count();
 
-                if($capacidadSala > $cantusuarios){
+            if($capacidadSala > $cantusuarios){
 
               $detalladosalas = new DetalladoSalas();
 
@@ -93,16 +104,18 @@ class SalasController extends Controller
                 $detalladosalas->puntaje=$puntaje;
                 $detalladosalas->save();
 
-                if($capacidadSala==($cantusuarios-1)){
+
+                if($capacidadSala==($cantusuarios+1)){
                     $Salas=Salas::findOrFail($idSala);
+                    $cantSalas=$Salas->count();
                     $Salas->estado='2';
                     $Salas->save();
                     //cambio estado de la sala y salgo
-                    $respuesta="Usuario ingresa con éxito";
+                    $respuesta="Ultimo Usuario ingresa con éxito, cantidad de usuarios sala: ".$idSala." es: ".$cantusuarios." debo cerrar la sala; conteo de registros de sala: ".$cantSalas;
                 }
                 else{
                     //solo salgo
-                    $respuesta="Usuario ingresa con éxito";
+                    $respuesta="Usuario ingresa con éxito, la cantidad de usuarios registrados antes en la sala ".$idSala." es: ".$cantusuarios;
                 }
             }
             else {
