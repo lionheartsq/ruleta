@@ -27,11 +27,15 @@ class JugadorController extends Controller
 
         if($creados>0){
             //aca miro si estan activos
+           
+
+            
             $estados=Jugador::where('nombreUsuario','=',$nombreUsuario)
             ->where('estado','=','1')
             ->count();
 
             if($estados>0){
+                
                 echo "Disponible";
             }
             else{
@@ -40,7 +44,12 @@ class JugadorController extends Controller
         }
         else{
             //creo el usuario
+           
             echo "Debo crear el usuario";
+            $Jugador=new Jugador();
+            $Jugador->nombreUsuario=$request->nombreUsuario;
+            $Jugador->estado='1';
+            $Jugador->save();
         }
 
         echo $creados;
