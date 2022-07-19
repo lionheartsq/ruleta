@@ -17,6 +17,7 @@ class CreateJugadorTable extends Migration
             
             $table->id();
             $table->string('nombreUsuario', 255)->unique();
+            $table->integer('estado')->default(1);
             // $table->timestamps();
         });
     }

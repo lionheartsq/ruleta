@@ -108,3 +108,10 @@ Route::put("/salas/editar", "SalasController@editarsalas");
 Route::get("/salas/validar", "SalasController@validarsalas");
 Route::get("/salas/getInfo", "SalasController@infosalas");
 Route::get("/salas/ingresar", "SalasController@ingresarsalas");
+
+
+Route::get("/jugador/crear", "JugadorController@crearjugador");
+Route::put("/jugador/editar", "JugadorController@editarjugador");
+Route::get("/jugador/validar", "JugadorController@validarjugador");
+Route::get("/jugador/getInfo", "JugadorController@infojugador");
+Route::get("/jugador/ingresar", "JugadorController@ingresarjugador");

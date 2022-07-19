@@ -9,7 +9,7 @@ class Jugador extends Model
     //
     protected $table = 'jugador';
 
-    protected $fillable = ['nombreUsuario'];
+    protected $fillable = ['nombreUsuario','estado'];
    
     public $timestamps = false;
 }

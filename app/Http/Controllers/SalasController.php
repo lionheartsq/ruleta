@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Salas;
 use App\DetalladoSalas;
 use Illuminate\Support\Facades\DB;
+use App\Jugador;
 
 class SalasController extends Controller
 {
@@ -39,6 +40,10 @@ class SalasController extends Controller
         $detalladosalas->turno=$turno;
         $detalladosalas->puntaje=$puntaje;
         $detalladosalas->save();
+
+        $Jugador=Jugador::findOrFail($request->idJugador);
+        $Jugador->estado='2';
+        $Jugador->save();
 
         $respuesta="Ok";
 
@@ -104,6 +109,9 @@ class SalasController extends Controller
                 $detalladosalas->puntaje=$puntaje;
                 $detalladosalas->save();
 
+                $Jugador=Jugador::findOrFail($idJugador);
+                $Jugador->estado='2';
+                $Jugador->save();
 
                 if($capacidadSala==($cantusuarios+1)){
                     $Salas=Salas::findOrFail($idSala);
