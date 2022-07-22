@@ -146,6 +146,8 @@ class SalasController extends Controller
         //Debe validar el cambio de estado
 
 
+
+
         if(!$request->ajax()) return redirect('/');
         $Salas = Salas::findOrFail($request->id);
         $Salas->estado=($request->estado)+1;
@@ -153,35 +155,86 @@ class SalasController extends Controller
     }
 
     public function validarsalas(Request $request){
-/*
+        
+
         //aca verifica que la sala este cumpliendo con el parametro, si llega al tope se cierra
-        $capacidad= Salas::findOrFail($request->id)->get();
-
-        if(capacidadSala+1<$capacidad){
-            $Salas->estado=1;
-        }
-        if($capacidad==capacidadSala.value){
-            $Salas->estado=2;
-        }
-        if($capacidad==capacidadSala.value && nTurnos.value()==turnos.value() && nPuntaje.value()==puntos.value()){
-            $Salas->estado=3;
-        }
-        $Salas= new Salas();
-        $Salas->capacidadSala=$request->capacidadSala;
-
-        //$respuesta = Salas::orderBy('id','asc')->get();
-        $respuesta = "blablabla";
-
-        //return ['respuesta' => $respuesta]; */
+       
         }
 
 
-    public function infosalas(){
+    public function infosalas(Request $request){
         //desde aca puede validar el estado de los turnos (historico)
+        $turnos=$request->nTurnos;
+        $idJugador=$request->idJugador;
+        $idSala=$request->idSala;
+        $turno=$request->turno;
 
-            $respuesta = Salas::orderBy('id','asc')->get();
+        //Con esta consulta me traigo la sala 
+        $salaenjuego = Salas::where('estado', '=', 2)
+        ->where('id','=', $idSala)
+        ->select('id')
+        ->get();
+        
+        //con esta consulta traigo el tope de turnos 
+        $turnos= Salas::where('id','=',$salaenjuego)
+        ->select('salas.nTurnos')
+        ->get();
 
-            return ['respuesta' => $respuesta];
+        // return $turnos; BIEN
+        // return $salaenjuego; BIEN  
+
+        //con esta consulta traigo el turno 
+        $turno= DetalladoSalas::where('detalladosalas.idSala','=',$salaenjuego)
+        // ->where('detalladosalas.idJugador','=',$idJugador)
+        ->select('turno')
+        ->get();
+
+        // return $turno; BIEN 
+
+        //con esta consulta traigo el puntaje maximo
+        $puntaje=DetalladoSalas::where('detalladosalas.idSala','=', $salaenjuego)
+        // ->where('detalladosalas.idSala','=', $salaenjuego)
+        ->select(DB::RAW('max(detalladosalas.puntaje)as maximo'))
+        ->get();
+
+       
+        //con esta consulta traigo el nombre del jugador que gane la partida
+        $ganador=Jugador::join('detalladosalas','jugador.id','=','detalladosalas.idJugador')
+        ->where('detalladosalas.turno','=', $turnos)
+        ->where('detalladosalas.idSala','=', $salaenjuego)
+        ->where('detalladosalas.puntaje','=',$puntaje)
+        ->select('jugador.nombreUsuario')
+        ->get();
+
+        return $ganador;
+
+        
+
+        // if($turnos=$turno){
+
+        //    return "El ganador del juego es".$ganador."con un puntaje de".$puntaje;
+           
+        //    $Sala=Salas::findOrFail($request->idSala);
+        //    $Sala->estado='3';
+        //    $Sala->save();
+
+        // }
+        // else
+        // {
+        //     echo "nadie gana aun";
+        // }
+        // $ganador=DetalladoSalas::join('salas','detalladosalas.idSala','=',$salaenjuego)
+        // ->select('detalladosalas.idJugador','detalladosalas.idSala','detalladosalas.turno', 'salas.nTurnos')
+        // ->where('detalladosalas.idJugador','=', $idJugador)
+        // ->where('salas.nTurnos','=', $turnos)
+        // ->get();
+
+
+        
+
+            // $respuesta = Salas::orderBy('id','asc')->get();
+
+            // return ['respuesta' => $respuesta];
         }
 
 }
