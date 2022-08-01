@@ -144,10 +144,6 @@ class SalasController extends Controller
     public function editarsalas(Request $request)
     {
         //Debe validar el cambio de estado
-
-
-
-
         if(!$request->ajax()) return redirect('/');
         $Salas = Salas::findOrFail($request->id);
         $Salas->estado=($request->estado)+1;
@@ -155,86 +151,199 @@ class SalasController extends Controller
     }
 
     public function validarsalas(Request $request){
-        
 
         //aca verifica que la sala este cumpliendo con el parametro, si llega al tope se cierra
-       
-        }
+                
+                $idSala=$request->idSala;
+                $turnos="";
+                $idJugador="";
+                $turnojugador="";
+                $estado="";
+               
+                //Con esta consulta me traigo la sala 
+                $salaenjuego = Salas::where('id','=', $idSala)
+                ->select('estado','tipoJuego','nTurnos','nPuntaje','capacidadSala')
+                ->get();
+
+                foreach($salaenjuego as $asig){
+                    $estado = $asig->estado;
+                    $tipoJuego = $asig->tipoJuego;
+                    $nTurnos1 = $asig->nTurnos;
+                    $nPuntaje = $asig->nPuntaje;
+                    $capacidadSala1 = $asig->capacidadSala;
+                }
+               
+                if($estado == '2'){
+                       
+                    // return "entro por estado 2".$estado;
+                    //totumado de operaciones
+                    // return "entro al if";
+                    //  con esta consulta traigo el tope de turnos 
+
+                    $nTurnos= Salas::where('id','=',$idSala)
+                    ->select('salas.nTurnos')
+                    ->get();
+
+                    // return $nTurnos; 
+
+                    // con esta consulta traigo el turno 
+                    $turnojugador= DetalladoSalas::where('detalladosalas.idSala','=',$idSala)
+                    // ->where('detalladosalas.idJugador','=',$idJugador)
+                    ->select('detalladosalas.turno')
+                    ->get();
+
+                    // return $turnojugador; 
+
+                    // // //con esta consulta traigo el puntaje maximo
+                    $puntaje=DetalladoSalas::where('detalladosalas.idSala','=', $idSala)
+                    // ->where('detalladosalas.idSala','=', $salaenjuego)--- esta no se descomenta
+                    ->select(DB::RAW('max(detalladosalas.puntaje)as maximo'))
+                    ->get();
+                     // return $puntaje; FUNCIONA 
+
+                     $puntajehistorico = DetalladoSalas::join('jugador','detalladosalas.idJugador','=','jugador.id')
+                     ->where('detalladosalas.idSala','=',$idSala)
+                    //  ->where('detalladosalas.puntaje','>',$puntaje)   
+                     ->select('jugador.nombreUsuario','detalladosalas.puntaje')                 
+                     ->get();
+                    
+                     $turnoshistorico = DetalladoSalas::join('jugador','detalladosalas.idJugador','=','jugador.id')
+                     ->where('detalladosalas.idSala','=',$idSala)
+                    //  ->where('detalladosalas.puntaje','>',$puntaje)   
+                     ->select('jugador.nombreUsuario','detalladosalas.turno')                 
+                     ->get();
+                                       
+                    //  return ['puntaje actual'=> $puntajehistorico];     
+                    
+                    $puntajen=DetalladoSalas::where('detalladosalas.idSala','=', $idSala)
+                    ->where('detalladosalas.idJugador','=', $idJugador)
+                    ->select('detalladosalas.puntaje')
+                    ->get();
+
+                    // return $puntajen;  
+                   
+                    // // con esta consulta sumo los turnos de los jugadores que hay en sala
+                    $sumaturnos= DetalladoSalas::where('detalladosalas.idSala','=', $idSala)
+                    ->select(DB::RAW('sum(detalladosalas.turno)as sumaturnos'))
+                    ->get();
+
+                    foreach($sumaturnos as $asig){
+                        $sumaturnos1 = $asig->sumaturnos;
+                        }  
+
+                    $ganador = DetalladoSalas::join('jugador','detalladosalas.idJugador','=','jugador.id')
+                    ->where('detalladosalas.idSala','=',$idSala)
+                    ->where('detalladosalas.puntaje','>',$puntaje)   
+                    ->select('jugador.nombreUsuario')                 
+                    ->get();
+
+                    foreach($ganador as $asig){
+                        $ganadorf = $asig->nombreUsuario;
+                        }  
+                    
+                    $actualizaestado = DetalladoSalas::join('jugador','detalladosalas.idJugador','=','jugador.id')
+                    ->where('detalladosalas.idSala','=',$idSala)
+                    // ->where('detalladosalas.puntaje','>',$puntaje)   
+                    ->select('jugador.estado')                 
+                    ->get();
+
+                    foreach($actualizaestado as $asig){
+                        $actualizaestado1 = $asig->estado;
+                       
+                        } 
+
+                    foreach($puntaje as $asig){
+                        $puntaje1 = $asig->maximo;
+                        $turnojugador= $asig->turno;
+                        $sumaturnos=$asig->turno;
+                        }   
+                    // return $idganador;
+                                         
+                    if($tipoJuego == '1'){ 
+                        //miro si alguno ya llegó a los puntos
+                        // return "entro al if tipojuego 1";                             
+                        // return "entro al primer if, tipo juego 1";
+                        if($nPuntaje <= $puntaje1){
+                        
+                        $Sala=Salas::findOrFail($idSala);
+                        $Sala->estado='3';
+                        $Sala->save();
+                        return "el ganador del juego es ".$ganadorf." con un puntaje de ".$puntaje1." puntos";
+
+                        }
+                        else
+                        { 
+                            return ['puntaje actual'=> $puntajehistorico];    
+                        }
+                                       
+                    }
+                    else if($tipoJuego == '2'){
+                        //miro si TODOS ya llegaron a los turnos y valido quien tiene mas puntos
+                        // return "entro al segundo if, tipo juego 2";                       
+                        //se declara el fin del juego cuando la suma de turnos de todos los jugadores sea 
+                        // igual a los turnos por jugador multiplicados por la cantidad de jugadores
+                        $topefin=0;
+                        $topefin = $nTurnos1 * $capacidadSala1;
+
+                        if ($sumaturnos1==$topefin){
+                         
+                        $Sala=Salas::findOrFail($idSala);
+                        $Sala->estado='3';
+                        $Sala->save();
+
+                        return "el ganador del juego es ".$ganadorf." con un puntaje de ".$puntaje1." puntos";
+                                                  
+                    }
+                    else
+                    {
+                        return ['historial de turnos'=> $turnoshistorico];
+                    }
+                                    
+                    }
+                }
+                else{    
+                    // return "entre al ultimo else";
+                    
+                    //cerre la sala y muestro el ganador
+
+                    if($estado=='3'){
+                            $cambiarestadoj = DetalladoSalas::join('jugador','detalladosalas.idJugador','=','jugador.id')
+                            ->where('detalladosalas.idSala','=',$idSala) 
+                            ->select('detalladosalas.idJugador')                 
+                            ->get();
+                            
+                            // return $cambiarestadoj;
+
+                            foreach($cambiarestadoj as $asig){
+                                $cambiarestadoj1 = $asig->idJugador;
+                                }   
+                            
+                            // return ['los id son'=> $cambiarestadoj];
+                           
+                                $jugador=Jugador::findOrFail($cambiarestadoj1);
+                                $jugador->estado='2';
+                                $jugador->save();
+
+                                return "funciono pero solo actualiza un estado";
+
+                        } 
+                                       
+                }
+
+            } 
 
 
-    public function infosalas(Request $request){
-        //desde aca puede validar el estado de los turnos (historico)
-        $turnos=$request->nTurnos;
-        $idJugador=$request->idJugador;
-        $idSala=$request->idSala;
-        $turno=$request->turno;
+            public function infosalas(Request $request){
+            //desde aca puede validar el estado de los turnos (historico)
+            $idSala=$request->idSala;
 
-        //Con esta consulta me traigo la sala 
-        $salaenjuego = Salas::where('estado', '=', 2)
-        ->where('id','=', $idSala)
-        ->select('id')
-        ->get();
+            $respuesta = DetalladoSalas::join('jugador','detalladosalas.idJugador','=','jugador.id')
+            ->where('idSala','=',$idSala)
+            ->select('turno','puntaje','nombreUsuario')
+            ->orderBy('detalladosalas.id','asc')
+            ->get();
         
-        //con esta consulta traigo el tope de turnos 
-        $turnos= Salas::where('id','=',$salaenjuego)
-        ->select('salas.nTurnos')
-        ->get();
-
-        // return $turnos; BIEN
-        // return $salaenjuego; BIEN  
-
-        //con esta consulta traigo el turno 
-        $turno= DetalladoSalas::where('detalladosalas.idSala','=',$salaenjuego)
-        // ->where('detalladosalas.idJugador','=',$idJugador)
-        ->select('turno')
-        ->get();
-
-        // return $turno; BIEN 
-
-        //con esta consulta traigo el puntaje maximo
-        $puntaje=DetalladoSalas::where('detalladosalas.idSala','=', $salaenjuego)
-        // ->where('detalladosalas.idSala','=', $salaenjuego)
-        ->select(DB::RAW('max(detalladosalas.puntaje)as maximo'))
-        ->get();
-
-       
-        //con esta consulta traigo el nombre del jugador que gane la partida
-        $ganador=Jugador::join('detalladosalas','jugador.id','=','detalladosalas.idJugador')
-        ->where('detalladosalas.turno','=', $turnos)
-        ->where('detalladosalas.idSala','=', $salaenjuego)
-        ->where('detalladosalas.puntaje','=',$puntaje)
-        ->select('jugador.nombreUsuario')
-        ->get();
-
-        return $ganador;
-
-        
-
-        // if($turnos=$turno){
-
-        //    return "El ganador del juego es".$ganador."con un puntaje de".$puntaje;
-           
-        //    $Sala=Salas::findOrFail($request->idSala);
-        //    $Sala->estado='3';
-        //    $Sala->save();
-
-        // }
-        // else
-        // {
-        //     echo "nadie gana aun";
-        // }
-        // $ganador=DetalladoSalas::join('salas','detalladosalas.idSala','=',$salaenjuego)
-        // ->select('detalladosalas.idJugador','detalladosalas.idSala','detalladosalas.turno', 'salas.nTurnos')
-        // ->where('detalladosalas.idJugador','=', $idJugador)
-        // ->where('salas.nTurnos','=', $turnos)
-        // ->get();
-
-
-        
-
-            // $respuesta = Salas::orderBy('id','asc')->get();
-
-            // return ['respuesta' => $respuesta];
+            return ['respuesta' => $respuesta];
         }
 
 }
