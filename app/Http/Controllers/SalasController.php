@@ -360,51 +360,21 @@ class SalasController extends Controller
 
                 else{
                     // return "entre al ultimo else";
-
                     //cerre la sala y muestro el ganador
                     if($estado == '3')
                     {
-                    $puntaje=DetalladoSalas::where('detalladosalas.idSala','=', $idSala)
-                    // ->where('detalladosalas.idSala','=', $salaenjuego)--- esta no se descomenta
-                    ->select(DB::RAW('max(detalladosalas.puntaje)as maximo'))
-                    ->get();
 
-                    foreach($puntaje as $asig){
-                        $puntaje1 = $asig->maximo;
-                        $turnojugador= $asig->turno;
-                        $sumaturnos=$asig->turno;
-                        }
-
-                    $ganador = DetalladoSalas::join('jugador','detalladosalas.idJugador','=','jugador.id') //este solo deberia usarlo cuando la sala llega a la necesidad de cerrarse
-                    ->where('detalladosalas.idSala','=',$idSala)
-                    ->where('detalladosalas.puntaje','>',$puntaje)
-                    ->select('jugador.nombreUsuario')
-                    ->get();
-
-                    foreach($ganador as $asig){
-                        $ganadorf = $asig->nombreUsuario;
-                        }
-
-                    $puntajehistorico = DetalladoSalas::join('jugador','detalladosalas.idJugador','=','jugador.id')
-                    ->where('detalladosalas.idSala','=',$idSala)
-                    //  ->where('detalladosalas.puntaje','>',$puntaje)
-                    ->select('jugador.nombreUsuario','detalladosalas.puntaje','detalladosalas.turno')
-                    ->get();
-   
                     $turnoshistorico = DetalladoSalas::join('jugador','detalladosalas.idJugador','=','jugador.id') //este lo puede traer y de hecho deberia en la linea anterior
                     ->where('detalladosalas.idSala','=',$idSala)
                     //  ->where('detalladosalas.puntaje','>',$puntaje)
                     ->select('jugador.nombreUsuario','detalladosalas.turno','detalladosalas.puntaje')
                     ->orderBy('puntaje','desc')
                     ->get();
-
                     // return ['Puntaje final'=> $turnoshistorico];
                     // echo "el ganador del juego es ".$ganadorf." con un puntaje de ".$puntaje1." puntos";
                     return ['Puntaje final'=> $turnoshistorico];
                     // "el ganador del juego es ".$ganadorf." con un puntaje de ".$puntaje1." puntos";
-                     
-                    
-                    
+
                     }
  
                 }
