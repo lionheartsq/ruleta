@@ -36,10 +36,16 @@ class JugadorController extends Controller
 
                 //echo "Disponible";
                 $mensaje="Disponible";
+                $idJugadorSelect= Jugador::select('id')->where('nombreUsuario','=',$nombreUsuario)->where('estado','=','1')->get();
+
+                foreach($idJugadorSelect as $select){ //apertura foreach nomina
+                    $idJugador = $select->id;
+                }
             }
             else{
                 //echo "Ocupado";
                 $mensaje="Ocupado";
+                $idJugador=0;
             }
         }
         else{
@@ -50,11 +56,15 @@ class JugadorController extends Controller
             $Jugador->nombreUsuario=$request->nombreUsuario;
             $Jugador->estado='1';
             $Jugador->save();
+            $idJugador= $Jugador->id;
             $mensaje="Nuevo";
         }
 
         //echo $creados;
-        return ['code' => $mensaje];
+        return [
+            'code' => $mensaje,
+            'idJugador' => $idJugador
+            ];
     }
 
 
